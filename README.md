@@ -145,6 +145,16 @@ Ensure you're using the correct file:
 
 **Keep decrypted files secure and never share them publicly.**
 
+### About Weak Cryptographic Algorithms
+
+This tool intentionally uses weak cryptographic algorithms (AES-ECB and AES-CBC with zero IV) because these are the algorithms used by Huawei routers to encrypt their configuration files. We are **decrypting** existing data, not encrypting new data. This is a legitimate use case for:
+- Security research
+- Device administration
+- Data recovery
+- Forensic analysis
+
+The tool does not introduce new security vulnerabilities; it only works with the encryption methods already in use by the devices.
+
 ## Example Files
 
 This repository includes example encrypted files for testing:

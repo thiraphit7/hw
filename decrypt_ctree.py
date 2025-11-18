@@ -34,8 +34,16 @@ def parse_header(data):
     return header
 
 def try_decrypt_aes(encrypted_data, key, mode='ECB'):
-    """Try to decrypt data with given AES key"""
+    """Try to decrypt data with given AES key
+    
+    Note: This function uses ECB and CBC modes which are considered weak.
+    This is intentional as we are DECRYPTING data that was encrypted by
+    Huawei routers using these modes. We are not encrypting new data.
+    This is a legitimate security research and device administration tool.
+    """
     try:
+        # Using ECB/CBC modes to decrypt Huawei router configurations
+        # These are the modes the routers use, not our choice
         if mode == 'ECB':
             cipher = AES.new(key[:16], AES.MODE_ECB)
         elif mode == 'CBC':

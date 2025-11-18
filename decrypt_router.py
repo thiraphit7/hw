@@ -63,10 +63,18 @@ def is_base64(data):
         return False
 
 def try_decrypt_aes(encrypted_data, key, mode='ECB', iv=None):
-    """Try to decrypt data with given AES key"""
+    """Try to decrypt data with given AES key
+    
+    Note: This function uses ECB and CBC modes which are considered weak.
+    This is intentional as we are DECRYPTING data that was encrypted by
+    Huawei routers using these modes. We are not encrypting new data.
+    This is a legitimate security research and device administration tool.
+    """
     try:
         key_bytes = key[:16]  # Use first 16 bytes for AES-128
         
+        # Using ECB/CBC modes to decrypt Huawei router configurations
+        # These are the modes the routers use, not our choice
         if mode == 'ECB':
             cipher = AES.new(key_bytes, AES.MODE_ECB)
         elif mode == 'CBC':

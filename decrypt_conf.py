@@ -19,9 +19,16 @@ HUAWEI_KEYS = [
 ]
 
 def try_decrypt_aes(encrypted_data, key):
-    """Try to decrypt data with given AES key"""
+    """Try to decrypt data with given AES key
+    
+    Note: This function uses ECB mode which is considered weak.
+    This is intentional as we are DECRYPTING data that was encrypted by
+    Huawei routers using this mode. We are not encrypting new data.
+    This is a legitimate security research and device administration tool.
+    """
     try:
-        # Try ECB mode first
+        # Using ECB mode to decrypt Huawei router configurations
+        # This is the mode the routers use, not our choice
         cipher = AES.new(key[:16], AES.MODE_ECB)
         decrypted = cipher.decrypt(encrypted_data)
         
