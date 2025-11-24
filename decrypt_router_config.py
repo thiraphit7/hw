@@ -24,6 +24,10 @@ import sys
 import os
 
 
+# Minimum length for Base64 data to be considered valid router config
+MIN_BASE64_LENGTH = 100
+
+
 def extract_base64_from_file(input_filename):
     """
     Extract Base64-encoded data from HTML/conf file.
@@ -35,15 +39,22 @@ def extract_base64_from_file(input_filename):
         str: Base64-encoded string if found, None otherwise
     """
     try:
-        with open(input_filename, 'r', encoding='utf-8') as f:
-            content = f.read()
+        # Try UTF-8 first, fallback to latin-1 for robustness
+        try:
+            with open(input_filename, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            with open(input_filename, 'r', encoding='latin-1') as f:
+                content = f.read()
         
         # Search for Base64 data (long strings with Base64 characters)
-        # Looking for strings with at least 100 characters
-        match = re.search(r'([A-Za-z0-9+/=]{100,})', content)
+        # Use non-greedy match and ensure we get the longest continuous Base64 string
+        pattern = r'([A-Za-z0-9+/=]{' + str(MIN_BASE64_LENGTH) + r',})'
+        matches = re.findall(pattern, content)
         
-        if match:
-            return match.group(1)
+        if matches:
+            # Return the longest match (most likely the config data)
+            return max(matches, key=len)
         else:
             return None
             
