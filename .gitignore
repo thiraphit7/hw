@@ -1,6 +1,9 @@
 # Generated binary files from decryption
 *.bin
 
+# Generated XML config files
+*_decrypted.xml
+
 # Python cache
 __pycache__/
 *.py[cod]
