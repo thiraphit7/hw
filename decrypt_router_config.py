@@ -75,9 +75,10 @@ def generate_key_wordlist():
     version_tokens = [
         'V5R023C10',
         'V5',
-        '2023',
-        '2024',
     ]
+    
+    # Year tokens
+    year_tokens = ['2023', '2024', '2025']
     
     keys = []
     
@@ -102,7 +103,7 @@ def generate_key_wordlist():
     
     # Pattern 5: <base>_<year>
     for base in base_tokens:
-        for year in ['2023', '2024', '2025']:
+        for year in year_tokens:
             keys.append(f"{base}_{year}")
     
     # Pattern 6: <base>_<firmware>_<keyrole>
@@ -123,15 +124,9 @@ def generate_key_wordlist():
         'ONTUSER',
     ])
     
-    # Convert all to bytes and return unique keys
-    unique_keys = []
-    seen = set()
-    
-    for key in keys:
-        key_bytes = key.encode('utf-8')
-        if key_bytes not in seen:
-            seen.add(key_bytes)
-            unique_keys.append(key_bytes)
+    # Deduplicate and convert to bytes efficiently
+    unique_keys_set = set(keys)
+    unique_keys = [key.encode('utf-8') for key in unique_keys_set]
     
     # Also add null key
     unique_keys.append(b'\x00' * 16)
