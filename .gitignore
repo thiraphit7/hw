@@ -1,0 +1,26 @@
+# Generated binary files from decryption
+*.bin
+
+# Generated XML config files
+*_decrypted.xml
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
