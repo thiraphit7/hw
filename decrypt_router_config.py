@@ -34,13 +34,113 @@ except ImportError:
 # Minimum length for Base64 data to be considered valid router config
 MIN_BASE64_LENGTH = 100
 
-# Known Huawei router encryption keys
-KNOWN_KEYS = [
-    b'$HuaweiHg8245Q',           # Common AIS key
-    b'\x00' * 16,                 # Null key
-    b'hg8245',                    # Simple key
-    b'huawei',                    # Simple key
-]
+
+def generate_key_wordlist():
+    """
+    Generate an expanded list of potential encryption keys based on common patterns
+    found in Huawei router configurations.
+    
+    Returns:
+        list: List of potential keys as bytes
+    """
+    # Base tokens - router model variants
+    base_tokens = [
+        'HG8145B7N',
+        'hg8145b7n',
+        'HuaweiHG8145B7N',
+        'Huawei_HG8145B7N',
+        'AIS_HG8145B7N',
+        'AISfiberHG8145B7N',
+        'HG8145B7N_V5R023C10',
+        'HG8145B7Nrouter',
+        'HG8145B7N_ONT',
+        'HG8245Q',  # Another common model
+        'hg8245q',
+    ]
+    
+    # Key-role tokens
+    keyrole_tokens = [
+        'key',
+        'KEY',
+        'aes',
+        'AES',
+        'cfg',
+        'cfgkey',
+        'config',
+        'DecKey',
+        'EncKey',
+    ]
+    
+    # Firmware/version tokens
+    version_tokens = [
+        'V5R023C10',
+        'V5',
+        '2023',
+        '2024',
+    ]
+    
+    keys = []
+    
+    # Pattern 1: <base>
+    for base in base_tokens:
+        keys.append(base)
+    
+    # Pattern 2: <base>_<keyrole>
+    for base in base_tokens:
+        for role in keyrole_tokens:
+            keys.append(f"{base}_{role}")
+    
+    # Pattern 3: <keyrole>_<base>
+    for role in keyrole_tokens:
+        for base in base_tokens:
+            keys.append(f"{role}_{base}")
+    
+    # Pattern 4: <base><keyrole> (no separator)
+    for base in base_tokens:
+        for role in keyrole_tokens:
+            keys.append(f"{base}{role}")
+    
+    # Pattern 5: <base>_<year>
+    for base in base_tokens:
+        for year in ['2023', '2024', '2025']:
+            keys.append(f"{base}_{year}")
+    
+    # Pattern 6: <base>_<firmware>_<keyrole>
+    for base in base_tokens:
+        for ver in version_tokens:
+            for role in keyrole_tokens:
+                keys.append(f"{base}_{ver}_{role}")
+    
+    # Add some standalone commonly used keys
+    keys.extend([
+        '$HuaweiHg8245Q',  # Known AIS key
+        'huawei',
+        'Huawei',
+        'HUAWEI',
+        'admin',
+        'password',
+        'HuaweiONT',
+        'ONTUSER',
+    ])
+    
+    # Convert all to bytes and return unique keys
+    unique_keys = []
+    seen = set()
+    
+    for key in keys:
+        key_bytes = key.encode('utf-8')
+        if key_bytes not in seen:
+            seen.add(key_bytes)
+            unique_keys.append(key_bytes)
+    
+    # Also add null key
+    unique_keys.append(b'\x00' * 16)
+    
+    return unique_keys
+
+
+# Generate the expanded key wordlist
+KNOWN_KEYS = generate_key_wordlist()
 
 
 def decrypt_aes(encrypted_data, key):

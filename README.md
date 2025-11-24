@@ -22,11 +22,24 @@ The script automatically extracts and decodes the Base64 data from the HTML/conf
 
 ### Step 2: AES Decryption (Automatic + Manual Fallback)
 
-The script attempts automatic AES decryption with known keys:
-- `$HuaweiHg8245Q` (common AIS key)
-- Null key  
-- `hg8245`
-- `huawei`
+The script attempts automatic AES decryption with an **extensive wordlist of 737+ known keys**, including:
+
+**Pattern-based key generation:**
+- Router model variants (HG8145B7N, hg8145b7n, HuaweiHG8145B7N, etc.)
+- Key-role combinations (key, KEY, aes, AES, cfg, cfgkey, config, DecKey, EncKey)
+- Firmware versions (V5R023C10, V5, etc.)
+- Pattern combinations:
+  - `<model>_<keyrole>` (e.g., `HG8145B7N_AES`)
+  - `<keyrole>_<model>` (e.g., `cfgkey_HG8145B7N`)
+  - `<model><keyrole>` (e.g., `HG8145B7Nkey`)
+  - `<model>_<version>_<keyrole>` (e.g., `HG8145B7N_V5R023C10_AES`)
+
+**Common standalone keys:**
+- `$HuaweiHg8245Q` (known AIS key)
+- `huawei`, `Huawei`, `HUAWEI`
+- `admin`, `password`
+- `HuaweiONT`, `ONTUSER`
+- Null key
 
 If automatic decryption fails, the script saves a `.bin` file for manual decryption with external tools.
 
@@ -91,6 +104,25 @@ After successful decryption, open the XML file and search for:
   <PreSharedKey>your_wifi_password</PreSharedKey>
 </WLANConfiguration>
 ```
+
+## 🔑 Encryption Key Wordlist
+
+The script generates **737+ potential encryption keys** based on common Huawei router patterns:
+
+### Base Patterns
+- Router models: `HG8145B7N`, `hg8145b7n`, `HuaweiHG8145B7N`, `AIS_HG8145B7N`, etc.
+- Key roles: `key`, `KEY`, `aes`, `AES`, `cfg`, `cfgkey`, `config`, `DecKey`, `EncKey`
+- Versions: `V5R023C10`, `V5`, years (2023-2025)
+
+### Pattern Combinations
+1. `<base>` - e.g., `HG8145B7N`
+2. `<base>_<keyrole>` - e.g., `HG8145B7N_AES`
+3. `<keyrole>_<base>` - e.g., `cfgkey_HG8145B7N`
+4. `<base><keyrole>` - e.g., `HG8145B7Nkey`
+5. `<base>_<year>` - e.g., `HG8145B7N_2024`
+6. `<base>_<version>_<keyrole>` - e.g., `HG8145B7N_V5R023C10_AES`
+
+This comprehensive wordlist dramatically increases the chances of successful automatic decryption.
 
 ## 🛠️ Manual AES Decryption (If Automatic Fails)
 
