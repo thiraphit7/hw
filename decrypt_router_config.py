@@ -23,11 +23,9 @@ import re
 import sys
 import os
 import zlib
-import struct
 
 try:
     from Crypto.Cipher import AES
-    from Crypto.Util.Padding import unpad
     HAS_CRYPTO = True
 except ImportError:
     HAS_CRYPTO = False
@@ -64,13 +62,16 @@ def decrypt_aes(encrypted_data, key):
         elif len(key) > 16:
             key = key[:16]
         
-        # Try ECB mode (most common for Huawei)
+        # NOTE: ECB mode is used here because Huawei routers specifically use it
+        # for configuration file encryption. This is not a security vulnerability
+        # as we're only decrypting (not encrypting) existing router configs.
+        # codeql[py/weak-cryptographic-algorithm]
         cipher = AES.new(key, AES.MODE_ECB)
         decrypted = cipher.decrypt(encrypted_data)
         
         # Don't unpad yet - return raw decrypted data
         return decrypted
-    except Exception as e:
+    except (ValueError, KeyError) as e:
         return None
 
 
@@ -88,19 +89,19 @@ def decompress_data(data):
     try:
         # Try zlib decompression
         return zlib.decompress(data)
-    except:
+    except zlib.error:
         pass
     
     try:
         # Try zlib with negative wbits (raw deflate)
         return zlib.decompress(data, -zlib.MAX_WBITS)
-    except:
+    except zlib.error:
         pass
     
     try:
         # Try gzip decompression
         return zlib.decompress(data, zlib.MAX_WBITS | 16)
-    except:
+    except zlib.error:
         pass
     
     # Return original data if decompression fails
@@ -135,7 +136,7 @@ def try_decrypt_with_keys(encrypted_data):
                 # Additional validation - check for common router config tags
                 if any(tag in text for tag in ['WANPPPConnection', 'WLANConfiguration', 'InternetGatewayDevice']):
                     return decompressed, key
-        except:
+        except (UnicodeDecodeError, AttributeError):
             pass
         
         # Try without decompression
@@ -144,7 +145,7 @@ def try_decrypt_with_keys(encrypted_data):
             if '<?xml' in text[:100] or ('<' in text[:100] and '>' in text[:200]):
                 if any(tag in text for tag in ['WANPPPConnection', 'WLANConfiguration', 'InternetGatewayDevice']):
                     return decrypted, key
-        except:
+        except (UnicodeDecodeError, AttributeError):
             pass
     
     return None, None
