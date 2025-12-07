@@ -27,6 +27,23 @@
 - Keystream extracted via known-plaintext attack
 - Different counter values used for preview and data sections
 
+**Recovered Keystream**:
+```
+Block 0 (0x40): af1c7ee7fa6cb7c5bb83b81d055963ed
+Block 1 (0x50): da21d600dbd67e583f208e14e385a625
+```
+
+**File Header Structure**:
+```
+0x00-0x08: Magic (07122120) + Version (02)
+0x34:      Data offset (328 = 0x148)
+0x38:      Data size (49269 bytes)
+0x40-0x60: Encrypted XML preview
+0x148:     Data section metadata
+0x150:     Date stamp (20220709 = July 9, 2022)
+0x15C:     Encrypted config data start
+```
+
 ## Keys Tested (30+ million combinations)
 
 | Category | Count | Result |
