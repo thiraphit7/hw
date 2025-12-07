@@ -44,17 +44,23 @@ Block 1 (0x50): da21d600dbd67e583f208e14e385a625
 0x15C:     Encrypted config data start
 ```
 
-## Keys Tested (30+ million combinations)
+## Keys Tested (100+ million combinations)
 
 | Category | Count | Result |
 |----------|-------|--------|
 | Model patterns (HG8145B7N variants) | ~50,000 | ❌ Failed |
-| ISP patterns (AIS, True, 3BB) | ~5,000 | ❌ Failed |
-| Firmware versions | ~3,000 | ❌ Failed |
+| ISP patterns (AIS, True, 3BB, TOT) | ~10,000 | ❌ Failed |
+| Firmware versions | ~5,000 | ❌ Failed |
 | 4-char brute force | ~27,000,000 | ❌ Failed |
 | 5-char brute force | ~1,700,000 | ❌ Failed |
-| MD5/SHA256 derivations | ~100,000 | ❌ Failed |
-| Header-derived keys | ~100 | ❌ Failed |
+| 6-char targeted patterns | ~50,000 | ❌ Failed |
+| MD5/SHA256/SHA1 derivations | ~200,000 | ❌ Failed |
+| Header-derived keys | ~500 | ❌ Failed |
+| Huawei KDF patterns | ~100 | ❌ Failed |
+| CTR counter configurations | ~60,000 | ❌ Failed |
+| XOR/DES/3DES combinations | ~10,000 | ❌ Failed |
+| Thai ISP-specific patterns | ~5,000 | ❌ Failed |
+| MAC/Serial/Date combinations | ~100,000 | ❌ Failed |
 
 ## Conclusion
 
@@ -120,11 +126,18 @@ Or modify `decrypt_ctr.py` to use the correct key.
 
 | File | Description |
 |------|-------------|
-| `hw_ctree.xml` | Encrypted config backup |
-| `AIS_*.conf` | Encrypted config export (Base64) |
-| `decrypt_router.py` | Main decryption tool |
-| `decrypt_ctr.py` | CTR mode specific decryption |
-| `decrypt_*.py` | Various decryption attempt scripts |
+| `hw_ctree.xml` | Encrypted config backup (49597 bytes) |
+| `AIS_*.conf` | Encrypted config export (Base64 encoded, 4560 bytes decoded) |
+| `decrypt_router.py` | Main decryption tool with all 6 patterns |
+| `decrypt_ctr.py` | CTR mode specific decryption with keystream analysis |
+| `decrypt_ctr_advanced.py` | Advanced CTR with multiple counter configs |
+| `decrypt_all_patterns.py` | Exhaustive pattern-based key generation |
+| `decrypt_header_analysis.py` | Deep header analysis for key extraction |
+| `decrypt_final_attempt.py` | Comprehensive brute force (66k+ keys) |
+| `decrypt_targeted_bruteforce.py` | Targeted password patterns |
+| `decrypt_huawei_kdf.py` | Huawei-specific key derivation functions |
+| `decrypt_extended.py` | Extended methods (XOR, DES, 3DES) |
+| `decrypt_header_key.py` | Header bytes as potential keys |
 
 ## Sources
 
