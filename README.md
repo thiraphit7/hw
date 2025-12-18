@@ -44,22 +44,32 @@ python3 huawei_decrypt.py config.conf -o decrypted.xml
 ## 📚 Documentation
 
 For detailed research findings, encryption methods, and troubleshooting:
-- See [DECRYPTION_RESEARCH.md](DECRYPTION_RESEARCH.md) for comprehensive documentation
-- Includes file format analysis, known encryption keys, and decryption strategies
+- **[DECRYPTION_RESEARCH.md](DECRYPTION_RESEARCH.md)** - Comprehensive encryption method documentation
+- **[KEY_EXTRACTION_GUIDE.md](KEY_EXTRACTION_GUIDE.md)** - Detailed guide for extracting AES keys (NEW!)
+- **[DECRYPTION_METHODS_SUMMARY.md](DECRYPTION_METHODS_SUMMARY.md)** - Research findings summary
 
 ## 🔑 Finding Your Encryption Key
 
-If decryption fails with default keys, you need to extract the key from your router:
+If decryption fails with default keys, you need to extract the key from your router.
 
-1. **Router Filesystem Access** (requires SSH/Telnet):
-   ```bash
-   cat /etc/wap/aes_string
-   cat /online/aes_string
-   ```
+**See the comprehensive [KEY_EXTRACTION_GUIDE.md](KEY_EXTRACTION_GUIDE.md) for 5 detailed methods:**
 
-2. **Firmware Extraction**: Extract and analyze the router firmware
+1. **Direct Filesystem Access** (SSH/Telnet - Recommended)
+2. **Firmware Analysis** (Extract from firmware file)
+3. **Memory Dump Analysis** (Advanced - UART access)
+4. **Network Traffic Capture** (During backup operations)
+5. **Community Tools** (Automated extraction scripts)
 
-3. See [DECRYPTION_RESEARCH.md](DECRYPTION_RESEARCH.md#finding-your-routers-encryption-key) for detailed methods
+### Quick Method (SSH/Telnet):
+```bash
+# Connect to router
+telnet 192.168.1.1
+# Login with: telecomadmin / (check router label)
+
+# Extract key
+cat /etc/wap/aes_string
+cat /online/aes_string
+```
 
 ## 🛠️ Features
 
